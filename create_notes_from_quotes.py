@@ -23,14 +23,14 @@ for index, row in quotes.iterrows():
     )
 
     file_data = f"""---
-date: 2022-07-20
-time: 18:46 -04:00
+date: {row["Created"]}
+time: {row["Time"]}
 aliases: 
 favorite: {favorite}
 ---
 @tags: #perm📝/quote💬
 @links: {tags}
-@attributed-to: [[{row["Author"]}]]
+@attributed-to: [[{"" if type(row["Author"]) != str else row["Author"]}]]
 > [!QUOTE] 
 > {row["Quote"]}
 {comments}
