@@ -6,9 +6,10 @@
 from pathlib import Path
 from typing import List
 from datetime import datetime
+import glob
 import re
 
-PATH = Path(r"C:\Users\Quinn\My Drive\My Vault")
+PATH = Path(r"C:\Users\Quinn McHugh\My Drive (qpmchugh@gmail.com)\My Vault")
 FILE_EXTENSIONS = ["md"]
 
 
@@ -28,7 +29,10 @@ def get_files(
     file_list = []
     if exts:
         for ext in exts:
-            for f in dir.glob(f"{search_str}.{ext}"):
+            for f in glob.glob(
+                "C:/Users/Quinn McHugh/My Drive (qpmchugh@gmail.com)/My Vault/**/*.md",
+                recursive=True,
+            ):
                 file_list.append(f)
     else:
         for f in dir.glob(f"{search_str}"):
@@ -61,6 +65,7 @@ def get_date_from_metadata(str):
 
 
 for f in files:
+    f = Path(f)
     # print(f"Opening {f.name}")
     with open(f, "r", encoding="utf8") as file:
         file_data = file.read()
@@ -97,8 +102,20 @@ for f in files:
                 file_data,
             )
             print(file_data)"""
+        # file_data = file_data.replace("dv.view(", "await dv.view(")
+    if (
+        "300 Areas/302 Career/302.1 Work/Fort Robotics/journal/daily/"
+        in file_data
+    ):
+        file_data = file_data.replace(
+            "300 Areas/302 Career/302.1 Work/Fort Robotics/journal/daily/",
+            "100 Alignment/101 Daily/",
+        )
+        with open(f, "w", encoding="utf8") as file:
+            print(file_data)
+            # file.write(file_data)
 
-    if "000 Meta" not in str(f.resolve()):
+        # if "Z00 Meta" not in str(f.resolve()):
         """Replace date: and time: in metadata with actual file creation date and time"""
 
         """c_date = c_datetime.strftime("%Y-%m-%d")
@@ -177,6 +194,3 @@ for f in files:
     file_data = file_data.replace(
         "                                    * ", "\t\t\t\t\t\t\t\t\t- ",
     )'''
-
-    with open(f, "w", encoding="utf8") as file:
-        file.write(file_data)
