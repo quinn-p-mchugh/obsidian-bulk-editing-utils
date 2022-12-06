@@ -46,15 +46,22 @@ files = get_files(dir=PATH, exts=FILE_EXTENSIONS, recursive=True)
 for f in files:
     f = Path(f)
     # print(f"Opening {f.name}")
-    with open(f, "r", encoding="utf8") as file:
+    with open(f, "r+", encoding="utf-8") as file:
         file_data = file.read()
         m_timestamp = f.stat().st_mtime
         c_timestamp = f.stat().st_ctime
         m_datetime = datetime.fromtimestamp(m_timestamp).astimezone()
         c_datetime = datetime.fromtimestamp(c_timestamp).astimezone()
 
-        # file_data = file_data.replace("dv.view(", "await dv.view(")
-    if (
+        file_data = file_data.replace(
+            "<%+ tp.file.title %>", "`=this.file.name`"
+        )
+        print(f"Writing {file.name}")
+        file_data = file_data.replace("NaN", "`=this.file.name`")
+    with open(f, "w", encoding="utf-8") as file:
+        print(file_data)
+        # file.write(file_data)
+    """if (
         "300 Areas/302 Career/302.1 Work/Fort Robotics/journal/daily/"
         in file_data
     ):
@@ -64,12 +71,12 @@ for f in files:
         )
         with open(f, "w", encoding="utf8") as file:
             print(file_data)
-            # file.write(file_data)
+            # file.write(file_data)"""
 
-        # if "Z00 Meta" not in str(f.resolve()):
-        """Replace date: and time: in metadata with actual file creation date and time"""
+    # if "Z00 Meta" not in str(f.resolve()):
+    """Replace date: and time: in metadata with actual file creation date and time"""
 
-        """c_date = c_datetime.strftime("%Y-%m-%d")
+    """c_date = c_datetime.strftime("%Y-%m-%d")
         file_data = re.sub(
                 r"(date: )(?:(?:\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01]))|{{date}})",
                 lambda match: fr"{match.group(1)}{c_date}",
