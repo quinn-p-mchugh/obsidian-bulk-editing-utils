@@ -43,6 +43,27 @@ def get_files(
 
 files = get_files(dir=PATH, exts=FILE_EXTENSIONS, recursive=True)
 
+
+def format_tags_and_links(str):
+    regex_match_tags = re.compile(r"#[^\s]+")
+    regex_match_links = re.compile(r"\[\[[^\[\[\]\]]+\]\]")
+    tags = re.findall(regex_match_tags, str)
+    links = re.findall(regex_match_links, str)
+    return f"""@tags:: {' '.join([tag for tag in tags])}
+@links:: {' '.join([link for link in links])}\n"""
+
+
+def get_date_from_metadata(str):
+    arr = str.splitlines()
+    date_metadata = ""
+    for line in arr:
+        if "date:" in line:
+            date_metadata = line
+            break
+    date = date_metadata.split(":")[1].strip()
+    return date
+
+
 for f in files:
     f = Path(f)
     # print(f"Opening {f.name}")
@@ -61,6 +82,36 @@ for f in files:
     with open(f, "w", encoding="utf-8") as file:
         print(file_data)
         # file.write(file_data)
+    """if (
+        # regex = r"(---){1}((?:.|\n)*)(---){1}((?:.|\n)*)(# <%\+ tp\.file\.title %>)"
+        regex = r"(---){1}((?:.|\n)*)(---){1}((?:.|\n)*)(> \[!QUOTE\] )"
+        if (
+            "date:" in file_data
+            and not any(x in file_data for x in ["@created::"])
+            and re.match(regex, file_data)
+        ):
+            print(f"Opening {f.name}")
+            print(file_data)
+            file_data = re.sub(
+                regex,  # Match space between bottom bound of metadata and note title
+                lambda match: f"{match.group(1)}{match.group(2)}{match.group(3)}\n@created:: [[{get_date_from_metadata(match.group(2))}]]{match.group(4)}{match.group(5)}",
+                file_data,
+            )
+            print(file_data)
+
+        """
+        """if not any(
+            x in file_data for x in ["@tags::", "@links::"]
+        ) and re.match(regex, file_data):
+            print(f"Opening {f.name}")
+            print(file_data)
+            file_data = re.sub(
+                regex,  # Match space between bottom bound of metadata and note title
+                lambda match: f"{match.group(1)}{match.group(2)}{match.group(3)}\n{format_tags_and_links(match.group(4))}{match.group(5)}",
+                file_data,
+            )
+            print(file_data)"""
+        # file_data = file_data.replace("dv.view(", "await dv.view(")
     """if (
         "300 Areas/302 Career/302.1 Work/Fort Robotics/journal/daily/"
         in file_data
