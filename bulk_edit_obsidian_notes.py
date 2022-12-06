@@ -9,7 +9,7 @@ from datetime import datetime
 import glob
 import re
 
-PATH = Path(r"C:\Users\Quinn McHugh\My Drive (qpmchugh@gmail.com)\My Vault")
+PATH = Path(r"C:\Users\Quinn\My Drive (qpmchugh@gmail.com)\My Vault")
 FILE_EXTENSIONS = ["md"]
 
 
@@ -29,10 +29,7 @@ def get_files(
     file_list = []
     if exts:
         for ext in exts:
-            for f in glob.glob(
-                "C:/Users/Quinn McHugh/My Drive (qpmchugh@gmail.com)/My Vault/**/*.md",
-                recursive=True,
-            ):
+            for f in dir.rglob(f"*.{ext}",):
                 file_list.append(f)
     else:
         for f in dir.glob(f"{search_str}"):
@@ -66,22 +63,24 @@ def get_date_from_metadata(str):
 
 for f in files:
     f = Path(f)
-    # print(f"Opening {f.name}")
-    with open(f, "r+", encoding="utf-8") as file:
-        file_data = file.read()
+    print(f"Opening {f.resolve()}")
+    with open(f, "r", encoding="utf-8") as read_file:
+        file_data = read_file.read()
+        print(file_data)
         m_timestamp = f.stat().st_mtime
         c_timestamp = f.stat().st_ctime
         m_datetime = datetime.fromtimestamp(m_timestamp).astimezone()
         c_datetime = datetime.fromtimestamp(c_timestamp).astimezone()
 
-        file_data = file_data.replace(
-            "<%+ tp.file.title %>", "`=this.file.name`"
-        )
-        print(f"Writing {file.name}")
-        file_data = file_data.replace("NaN", "`=this.file.name`")
+    file_data = file_data.replace("# NaN", "# `=this.file.name`")
+    file_data = file_data.replace(
+        "# <%+ tp.file.title %>", "# `=this.file.name`"
+    )
+    file_data = file_data.replace("Week: [[", "@week:: [[")
+    file_data = file_data.replace("Month: [[", "@month:: [[")
+    file_data = file_data.replace("Year: [[", "@year:: [[")
     with open(f, "w", encoding="utf-8") as file:
-        print(file_data)
-        # file.write(file_data)
+        file.write(file_data)
     """if (
         # regex = r"(---){1}((?:.|\n)*)(---){1}((?:.|\n)*)(# <%\+ tp\.file\.title %>)"
         regex = r"(---){1}((?:.|\n)*)(---){1}((?:.|\n)*)(> \[!QUOTE\] )"
@@ -100,7 +99,7 @@ for f in files:
             print(file_data)
 
         """
-        """if not any(
+    """if not any(
             x in file_data for x in ["@tags::", "@links::"]
         ) and re.match(regex, file_data):
             print(f"Opening {f.name}")
@@ -111,7 +110,7 @@ for f in files:
                 file_data,
             )
             print(file_data)"""
-        # file_data = file_data.replace("dv.view(", "await dv.view(")
+    # file_data = file_data.replace("dv.view(", "await dv.view(")
     """if (
         "300 Areas/302 Career/302.1 Work/Fort Robotics/journal/daily/"
         in file_data
