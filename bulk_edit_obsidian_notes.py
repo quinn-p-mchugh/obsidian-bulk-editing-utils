@@ -8,6 +8,7 @@ from typing import List
 from datetime import datetime
 import glob
 import re
+from time import sleep
 
 PATH = Path(r"C:\Users\Quinn\My Drive (qpmchugh@gmail.com)\My Vault")
 FILE_EXTENSIONS = ["md"]
@@ -72,13 +73,15 @@ for f in files:
         m_datetime = datetime.fromtimestamp(m_timestamp).astimezone()
         c_datetime = datetime.fromtimestamp(c_timestamp).astimezone()
 
-    file_data = file_data.replace("# NaN", "# `=this.file.name`")
+    '''file_data = file_data.replace("# NaN", "# `=this.file.name`")
     file_data = file_data.replace(
         "# <%+ tp.file.title %>", "# `=this.file.name`"
     )
     file_data = file_data.replace("Week: [[", "@week:: [[")
     file_data = file_data.replace("Month: [[", "@month:: [[")
-    file_data = file_data.replace("Year: [[", "@year:: [[")
+    file_data = file_data.replace("Year: [[", "@year:: [[")'''
+    file_data = file_data.replace("> <%+ tp.file.title %>", "> `=this.file.name`")
+    sleep(0.01)
     with open(f, "w", encoding="utf-8") as file:
         file.write(file_data)
     """if (
